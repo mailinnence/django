@@ -1,0 +1,86 @@
+deeplearning\elections\views.py-----------------------------------------------
+
+from django.shortcuts import render
+from django.http import HttpResponse
+import datetime
+from django.http import HttpResponseRedirect
+from django.db.models import Sum
+from django.http import HttpResponseNotFound #추가
+
+# 라이브러리 사용
+import tensorflow as tf
+import pandas as pd
+
+def lemon(request):
+    if request.GET.get('val') != None and request.GET.get('val').isdigit():
+        val = request.GET.get('val')
+        val=float(val)
+        파일경로 = 'https://raw.githubusercontent.com/blackdew/tensorflow1/master/csv/lemonade.csv'
+        레모네이드 = pd.read_csv(파일경로)
+        레모네이드.head()
+
+        독립 = 레모네이드[['온도']]
+        종속 = 레모네이드[['판매량']]
+
+        # 모델을 만듭니다.
+        X = tf.keras.layers.Input(shape=[1])
+        Y = tf.keras.layers.Dense(1)(X)
+        model = tf.keras.models.Model(X, Y)
+        model.compile(loss='mse')
+
+        model.fit(독립, 종속, epochs=5000)
+
+        val2 ={ 'val2' : model.predict([[val]]) ,
+         'val':request.GET.get('val')
+
+        }
+        return render(request, 'elections/lemon.html', val2)
+    else:
+        return render(request, 'elections/lemon.html')
+
+
+
+deeplearning\elections\templates\elections\lemon.html -----------------------------------
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<script>
+    function check_input()
+    {
+        if (isNaN(document.index.val.value )==true) {
+            alert("숫자를 입력해주세요");
+            document.index.val.value = "";
+            document.index.val.focus();
+            return;
+        }
+        document.index.val.submit();
+
+    }
+</script>
+
+<h1>레몬에이드 가격 예측</h1>
+
+<form name="index" action="#" method="GET">
+    {% csrf_token %}
+    다음 시즌 예측하고 싶은 레몬에이드릐 가격을 입력해주세요:<br />
+    <input type="text" name="val"><br />
+    <input type="submit" value="start" name="시작" onclick="check_input()">
+
+</form>
+<h3>start버튼을 누르시고 기다려 주세요. 계산에 30초에서 1분정도 소요됩니다</h3>
+{% if val2 %}
+<h1>"입력한 값 :{{val}} 은 다음 시즌 예상되는 가격은 {{val2}} 으로 예상됩니다"</h1>
+{% endif %}
+
+
+
+
+</body>
+</html>
+
