@@ -1,0 +1,225 @@
+get 방식과 post 방식
+
+
+get-----------------
+
+
+
+deeplearning\elections\views.py-----------------------------------------------
+
+from django.shortcuts import render
+from django.http import HttpResponse
+import datetime
+from django.http import HttpResponseRedirect
+from django.db.models import Sum
+from django.http import HttpResponseNotFound #추가
+
+# 라이브러리 사용
+import tensorflow as tf
+import pandas as pd
+
+
+def index(request):
+    return HttpResponse("Hello world")
+
+
+
+def index1(request):
+    if request.GET.get('val') != None:
+        val = request.GET.get('val')
+        val=int(val)
+        val=val*2
+        val2 ={ 'val2' : val }
+        return render(request, 'elections/index.html', val2)
+    else:
+        return render(request, 'elections/index.html')
+
+
+PHP의 $_GET['변수']  >> request.GET.get('val') 되고 값은
+이렇게 return render(request, 'elections/index.html', val2) 보낸다
+
+
+
+deeplearning\elections\templates\elections\index.html -----------------------------------
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<script>
+    function check_input()
+    {
+    if (isNaN(document.index.val.value )==true) {
+        alert("숫자를 입력해주세요");
+        document.index.val.value = "";
+        document.index.val.focus();
+        return;
+    }
+        document.index.val.submit();
+    }
+</script>
+
+<h1>곱하기 2</h1>
+
+                <form name="index" action="#" method="GET">
+	   {% csrf_token %}
+                    숫자를 적어주세요:<br />
+                    <input type="text" name="val"><br />
+                    <input type="submit" value="Login" name="Login" onclick="check_input()">
+                </form>
+{% if val2 %}
+              <h1>"예상되는 가격은 {{val2}} 입니다"</h1>
+
+{% endif %}
+</body>
+</html>
+
+
+
+
+
+
+post-----------------
+
+
+
+deeplearning\elections\views.py-----------------------------------------------
+
+from django.shortcuts import render
+from django.http import HttpResponse
+import datetime
+from django.http import HttpResponseRedirect
+from django.db.models import Sum
+from django.http import HttpResponseNotFound #추가
+
+# 라이브러리 사용
+import tensorflow as tf
+import pandas as pd
+
+
+def index(request):
+    return HttpResponse("Hello world")
+
+
+#get 방식
+def index1(request):
+    if request.GET.get('val') != None:
+        val = request.GET.get('val')
+        val=int(val)
+        val=val*2
+        val2 ={ 'val2' : val }
+        return render(request, 'elections/index.html', val2)
+    else:
+        return render(request, 'elections/index.html')
+
+
+#post 방식
+def post(request):
+    return render(request, 'elections/post.html')
+
+
+
+def post2(request):
+    if request.POST.get('val') != None:
+        val = request.POST.get('val')
+        val=int(val)
+        val=val*2
+        val2 ={ 'val2' : val }
+        return render(request, 'elections/post2.html', val2)
+
+
+
+
+
+
+
+deeplearning\elections\templates\elections\post.html -----------------------------------
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<script>
+    function check_input()
+    {
+        if (isNaN(document.index.val.value )==true) {
+            alert("숫자를 입력해주세요");
+            document.index.val.value = "";
+            document.index.val.focus();
+            return;
+        }
+        document.index.val.submit();
+    }
+</script>
+
+<h1>곱하기 2</h1>
+
+<form name="index.html" action="a3" method="post">
+    {% csrf_token %}
+    숫자를 적어주세요:<br />
+    <input type="text" name="val"><br />
+    <input type="submit" value="Login" name="Login" onclick="check_input()">
+</form>
+
+
+</body>
+</html>
+
+
+
+
+
+
+
+deeplearning\elections\templates\elections\post2.html -----------------------------------
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{% if val2 %}
+<h1>"예상되는 가격은 {{val2}} 입니다"</h1>
+
+{% endif %}
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
